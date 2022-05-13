@@ -11,7 +11,7 @@ const server = http.createServer((request, response) => {
         response.writeHead(500, {'Content-Type': 'text/plain'});
         response.end('Internal server error.')
       }
-      response.writeHead(200, {'Content-Type': 'text/html'});
+      response.writeHead(200, {'Content-Type': 'text/html; charset=utf-8', 'Content-Length': data.length + ''});
       response.end(data)
     });
     //serve the client index.js file
@@ -19,10 +19,10 @@ const server = http.createServer((request, response) => {
     fs.readFile('./client/src/index.js', 'utf8', (err, data) => {
       if (err){
         console.log('Server error serving index.js:', err)
-        response.writeHead(500, {'Content-Type': 'text/plain'});
+        response.writeHead(500, {'Content-Type': 'text/plain; charset=utf-8'});
         response.end('Internal server error.')
       }
-      response.writeHead(200, {'Content-Type' : 'text/javascript'});
+      response.writeHead(200, {'Content-Type' : 'text/javascript; charset=utf-8', 'Content-Length': data.length + ''});
       response.end(data);
     })
   } else if (request.method === 'POST' && request.url === '/test'){
@@ -40,20 +40,22 @@ const server = http.createServer((request, response) => {
     request.on('end', ()=>{
       const requestBody = JSON.parse(body);
       let responseText;
+      let statusCode;
       if (requestBody.hasOwnProperty('string_to_cut') && typeof requestBody.string_to_cut === 'string'){
         responseText = stringParse(requestBody.string_to_cut);
-        response.writeHead(200, {'Content-Type': 'application/json'});
+        statusCode = 200;
       } else {
         responseText = 'Request not formatted properly. Requires key \'string_to_cut\' to have a value that is a string.';
-        response.writeHead(400, {'Content-Type': 'application/json'});
+        statusCode = 400;
       }
       const responseObj = JSON.stringify({return_string: responseText})
+      response.writeHead(statusCode, {'Content-Type': 'application/json; charset=utf-8', 'Content-Length': responseObj.length + ''});
       response.end(responseObj);
     })
 
   } else {
     //Handle any unexpected requests.
-    response.writeHead(404, {'Content-Type':'text/plain'});
+    response.writeHead(404, {'Content-Type':'text/plain; charset=utf-8'});
     response.end('404 Not Found');
   }
 }).listen(PORT, 'localhost', ()=>{
