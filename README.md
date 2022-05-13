@@ -1,29 +1,43 @@
 # Lyft Application
 This is just a small web application to satisfy the requirements of the Lyft application.
 
-It has a (very) barebones index.html that is served by a vanilla Node.js server on port 3000.
+It has a (very) barebones index.html that is served/has its script served by a vanilla Node server running on port 3000. 
 
-The index page has an input box that can be submitted to the server, and the server will return every 3rd character (i.e. str[2], str[5], ...).
+The server only accepts GET to '/', '/src/index.js', and POST to '/test'.
 
+A POST to '/test' will parse the request body, if it is properly formatted (see below) it will respond with every 3rd character of the string submitted on the request body.
 
-Example:
+### Example Request/Response:
 
 Request Body Object:
-{
-  string_to_cut: 'some string'
-}
+```
+{  
+  string_to_cut: 'some string'  
+}  
+```
+
 
 Response Object:
-{
-  return_string: 'msi'
+```
+{  
+  return_string: 'msi'  
 }
+```
+
+The request MUST have the key 'string_to_cut' with a value that is a string, or else it will return a generic error:
+
+```
+Request not formatted properly. Requires key 'string_to_cut' to have a value that is a string.
+```
 
 ## Starting the Application
 
-This is a vanilla Node.js server, so, as long as Node is installed, simply:
+This is a vanilla Node server, so, as long as Node is installed, simply:
+
 ```
 node server/server.js
 ```
+as there are no additional dependencies to install.
 
 ## Endpoints
 
